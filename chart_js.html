@@ -23,10 +23,10 @@
 
     <script>
         // Array to iterate through and plot on the chart
-        var arr = [];
+        var arr = [800, 810, 790, 800];
 
         // Labels for the x-axis (typically timestamps in a stock chart)
-        var labels = [];
+        var labels = ['10:00 AM', '11:00 AM', '12:00 PM', '1:00 PM', ''];
 
         // Get the canvas element where the chart will be drawn
         var ctx = document.getElementById('myChart').getContext('2d');
@@ -96,11 +96,19 @@
                 }
             }
         });
-
-        for (let i=0; i<=50; i+=10){
-            arr.push(800+i);
-            labels.push('10:00 AM');
-        }
+        
+        var i = 1;
+        
+        // Use setInterval to update the chart every 2 seconds
+        setInterval(function() {
+            // Add a new price to the data array
+            arr[3] = 800 + i;
+            
+            // Update the chart
+            myChart.update();
+            
+            i++;
+        }, 2000);  // 2000 milliseconds (2 seconds)
     </script>
 
 </body>
