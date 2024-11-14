@@ -48,8 +48,12 @@
                     backgroundColor: gradient,  // Faint background color
                     borderWidth: 2,  // Line width
                     fill: true,  // Don't fill the area under the line
-                    pointRadius: 0,  // No points
-                    pointHoverRadius: 5  // Small points on hover
+                    pointRadius: function(context) {
+                        // Show a point only on the last data point
+                        return context.dataIndex === arr.length - 1 ? 5 : 0;
+                    },
+                    pointHoverRadius: 5,  // Hover effect on the last point
+                    pointBackgroundColor: 'rgba(0, 200, 0, 1)'  // Color for the last point
                 }]
             },
             options: {
@@ -101,8 +105,8 @@
         
         // Use setInterval to update the chart every 2 seconds
         setInterval(function() {
-            // Add a new price to the data array
-            arr[3] = 800 + i;
+            // Update the last value in the array
+            arr[arr.length - 1] = 800 + i;
             
             // Update the chart
             myChart.update();
