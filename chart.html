@@ -91,6 +91,7 @@
                     tooltip: {
                         mode: 'index',  // Show all points at the same index
                         intersect: false,  // Show the tooltip on hover regardless of exact point
+                        usePointStyle: true,  // Use point style in tooltip
                         callbacks: {
                             label: function(tooltipItem) {
                                 return 'Price: $' + tooltipItem.raw;  // Custom label in tooltip
