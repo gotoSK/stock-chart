@@ -66,20 +66,24 @@
                     x: {
                         grid: {
                             display: false,  // Hide gridlines for X-axis
-                            color: '#444'  // Color of the gridlines (optional)
                         },
                         ticks: {
-                            color: '#ccc'  // X-axis label color
+                            color: '#ccc',  // X-axis label color
+                            font: { size: 12 },
+                            callback: function(value, index) {
+                                // Check if this is the hovered label
+                                return index === this._hoverIndex ? `→ ${labels[index]} ←` : labels[index];
+                            }
                         }
                     },
                     y: {
                         position: 'right', // Position price scale on the right side
                         grid: {
                             display: false,  // Hide gridlines for Y-axis
-                            color: '#444'  // Y-axis gridlines color
                         },
                         ticks: {
-                            color: '#ccc'  // Y-axis label color
+                            color: '#ccc',  // Y-axis label color
+                            font: { size: 12 },
                         },
                         beginAtZero: false  // Stock prices don't start from zero
                     }
@@ -93,9 +97,27 @@
                         intersect: false,  // Show the tooltip on hover regardless of exact point
                         usePointStyle: true,  // Use point style in tooltip
                         callbacks: {
+                            title: function(tooltipItems) {
+                                // Highlight x-axis label when tooltip is active
+                                myChart.options.scales.x.ticks.color = (context) => (
+                                    tooltipItems[0].dataIndex === context.index ? 'yellow' : '#ccc'
+                                );
+                                myChart.options.scales.y.ticks.color = (context) => (
+                                    arr[tooltipItems[0].dataIndex] === context.tick.value ? 'yellow' : '#ccc'
+                                );
+                                return tooltipItems[0].label;
+                            },
                             label: function(tooltipItem) {
                                 return 'Price: $' + tooltipItem.raw;  // Custom label in tooltip
                             }
+                        },
+                        external: function() {
+                            // Reset colors after tooltip
+                            setTimeout(() => {
+                                myChart.options.scales.x.ticks.color = '#ccc';
+                                myChart.options.scales.y.ticks.color = '#ccc';
+                                myChart.update();
+                            }, 500);
                         }
                     }
                 },
