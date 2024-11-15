@@ -32,9 +32,19 @@
         var ctx = document.getElementById('myChart').getContext('2d');
 
         // Create a gradient background for the line
-        var gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, 'rgba(0, 200, 0, 0.3)');
-        gradient.addColorStop(1, 'rgba(0, 200, 0, 0)');
+        function updateGradient() {
+            var gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            if (arr[arr.length - 1] >= arr[0]) {
+                // Green gradient for upward trend
+                gradient.addColorStop(0, 'rgba(0, 200, 0, 0.3)');
+                gradient.addColorStop(1, 'rgba(0, 200, 0, 0)');
+            } else {
+                // Red gradient for downward trend
+                gradient.addColorStop(0, 'rgba(200, 0, 0, 0.3)');
+                gradient.addColorStop(1, 'rgba(200, 0, 0, 0)');
+            }
+            return gradient;
+        }
 
         // Create the chart
         var myChart = new Chart(ctx, {
@@ -44,8 +54,10 @@
                 datasets: [{
                     label: 'Stock Price',  // Name of the dataset
                     data: arr,  // The array with values to plot
-                    borderColor: 'rgba(0, 200, 0, 1)',  // Line color (greenish)
-                    backgroundColor: gradient,  // Faint background color
+                    borderColor: function() {
+                        return arr[arr.length - 1] >= arr[0] ? 'rgba(0, 200, 0, 1)' : 'rgba(200, 0, 0, 1)';
+                    },  // Line color
+                    backgroundColor: updateGradient(),  // Faint background color
                     borderWidth: 2,  // Line width
                     fill: true,  // Don't fill the area under the line
                     pointRadius: function(context) {
@@ -53,12 +65,13 @@
                         return context.dataIndex === arr.length - 1 ? 5 : 0;
                     },
                     pointHoverRadius: 5,  // Hover effect on the last point
-                    pointBackgroundColor: 'rgba(0, 200, 0, 1)',  // Color for the last point
+                    pointBackgroundColor: function() {
+                        return arr[arr.length - 1] >= arr[0] ? 'rgba(0, 200, 0, 1)' : 'rgba(200, 0, 0, 1)';
+                    },  // Color for the last point
                     pointBorderWidth: function(context) {
                         // Make the last point thicker
                         return context.dataIndex === arr.length - 1 ? 1 : 0;
-                    },
-                    pointBorderColor: 'rgba(0, 200, 0, 1)'  // Border color for the last point
+                    }
                 }]
             },
             options: {
@@ -138,9 +151,11 @@
         // Use setInterval to update the chart every 2 seconds
         setInterval(function() {
             // Update the last value in the array
-            arr[arr.length - 1] = 800 + i;
-            
-            // Update the chart
+            arr[arr.length - 1] = 800 - i;
+
+            // Update the gradient and chart colors based on the trend
+            myChart.data.datasets[0].backgroundColor = updateGradient();
+            myChart.data.datasets[0].borderColor = arr[arr.length - 1] >= arr[0] ? 'rgba(0, 200, 0, 1)' : 'rgba(200, 0, 0, 1)';
             myChart.update();
             
             i++;
