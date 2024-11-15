@@ -22,8 +22,11 @@
     <canvas id="myChart"></canvas>
 
     <script>
+        // Load the value of 'i' from SessionStorage, or default to 1 if not set
+        var i = sessionStorage.getItem('i') ? parseInt(sessionStorage.getItem('i'), 10) : 1;
+
         // Array to iterate through and plot on the chart
-        var arr = [800, 810, 790, 800];
+        var arr = [800, 810, 790, 800+i];
 
         // Labels for the x-axis (typically timestamps in a stock chart)
         var labels = ['10:00 AM', '11:00 AM', '12:00 PM', '1:00 PM', ''];
@@ -146,20 +149,23 @@
             }
         });
         
-        var i = 1;
-        
-        // Use setInterval to update the chart every 2 seconds
+        // Update the chart every 2 seconds and store 'i' in sessionStorage
         setInterval(function() {
-            // Update the last value in the array
-            arr[arr.length - 1] = 800 - i;
-
-            // Update the gradient and chart colors based on the trend
+            arr[arr.length - 1] = 800 + i;
+            
+            // Update the gradient and border color based on the trend
             myChart.data.datasets[0].backgroundColor = updateGradient();
             myChart.data.datasets[0].borderColor = arr[arr.length - 1] >= arr[0] ? 'rgba(0, 200, 0, 1)' : 'rgba(200, 0, 0, 1)';
             myChart.update();
-            
-            i++;
-        }, 2000);  // 2000 milliseconds (2 seconds)
+
+            i++;  // Increment 'i' and store it in sessionStorage
+            sessionStorage.setItem('i', i);
+        }, 2000);
+
+        // ensure the value of i is saved before the page is unloaded (for data integrity &/or backup for unexpected interruptions)
+        window.addEventListener("beforeunload", function () {
+            sessionStorage.setItem('i', i);
+        });
     </script>
 
 </body>
